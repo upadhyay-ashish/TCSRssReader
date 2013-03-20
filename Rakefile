@@ -22,6 +22,7 @@ Motion::Project::App.setup do |app|
     pod 'XMLReader', '0.0.2'
     pod 'REMenu', '~> 1.2.4'
     pod 'Reachability', '~>2.0.5'
+    pod 'MBProgressHUD', '~> 0.6'
   end
 end
 

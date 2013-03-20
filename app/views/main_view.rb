@@ -33,11 +33,13 @@ class MainView < UITableViewController
     news_menu_item = REMenuItem.alloc.initWithTitle("News", subtitle:"TCS News", image:UIImage.imageNamed("Icon_Activity.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("News") })
 
     refresh_menu_item = REMenuItem.alloc.initWithTitle("Refresh", subtitle:"Refresh all feeds", image:UIImage.imageNamed("Icon_Profile.png"), highlightedImage:nil, action:Proc.new{ |obj|
+                                                         MBProgressHUD.showHUDAddedTo(self.view, animated:true)
                                                          FeedsParser.fetch_feeds("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
                                                          FeedsParser.fetch_feeds("Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p")
                                                          FeedsParser.fetch_feeds("News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n")
                                                          self.feeds = Feed.find( type: self.title)
                                                          self.tableView.reloadData    
+                                                         MBProgressHUD.hideHUDForView(self.view, animated:true)
                                                          })
 
     events_menu_item.tag    = 0;
