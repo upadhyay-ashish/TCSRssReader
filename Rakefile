@@ -20,5 +20,6 @@ Motion::Project::App.setup do |app|
   app.pods do
     pod 'NanoStore', '~> 2.6.0'
     pod 'XMLReader', '0.0.2'
+    pod 'REMenu', '~> 1.2.4'
   end
 end

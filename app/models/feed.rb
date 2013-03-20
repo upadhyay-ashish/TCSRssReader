@@ -5,10 +5,11 @@ class Feed < NanoStore::Model
   attribute :pubDate
   attribute :description
   attribute :text
+  attribute :type
   attribute :created_at
 
   class << self
-    def create_new title, author, link, pubDate, description, text
+    def create_new title, author, link, pubDate, description, text, type
       obj = new(
         title:        title,
         author:       author,
@@ -16,9 +17,10 @@ class Feed < NanoStore::Model
         pubDate:      pubDate,
         description:  description,
         text:         text, 
+        type:         type,
         created_at:   Time.now
       )
-      obj.save unless Feed.find(title: title)
+      obj.save if Feed.find(title: title).empty?
     end
   end
 end
