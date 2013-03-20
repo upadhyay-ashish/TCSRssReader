@@ -57,7 +57,7 @@ class MainView < UITableViewController
   end
 
   def update_feeds
-    hud = MBProgressHUD.showHUDAddedTo(self.view, animated:true)
+    hud = MBProgressHUD.showHUDAddedTo(self.view, animated:false)
     status1 = FeedsParser.fetch_feeds("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
     status2 = FeedsParser.fetch_feeds("Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p")
     status3 = FeedsParser.fetch_feeds("News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n")
