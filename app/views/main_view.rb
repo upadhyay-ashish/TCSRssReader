@@ -23,7 +23,7 @@ class MainView < UITableViewController
   end
 
   def showMenu
-
+    MBProgressHUD.hideHUDForView(self.view, animated:false)
     return self.menu.close if self.menu.isOpen
 
     events_menu_item = REMenuItem.alloc.initWithTitle("Events", subtitle:"TCS Events", image:UIImage.imageNamed("Icon_Home.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("Events") })
@@ -34,13 +34,19 @@ class MainView < UITableViewController
 
     refresh_menu_item = REMenuItem.alloc.initWithTitle("Refresh", subtitle:"Refresh all feeds", image:UIImage.imageNamed("Icon_Profile.png"), highlightedImage:nil, action:Proc.new{ |obj|
                                                          MBProgressHUD.showHUDAddedTo(self.view, animated:true)
-                                                         FeedsParser.fetch_feeds("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
-                                                         FeedsParser.fetch_feeds("Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p")
-                                                         FeedsParser.fetch_feeds("News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n")
+                                                         status1 = FeedsParser.fetch_feeds("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
+                                                         status2 = FeedsParser.fetch_feeds("Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p")
+                                                         status3 = FeedsParser.fetch_feeds("News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n")
                                                          self.feeds = Feed.find( type: self.title)
-                                                         self.tableView.reloadData    
-                                                         MBProgressHUD.hideHUDForView(self.view, animated:true)
-                                                         })
+                                                         self.tableView.reloadData
+                                                         MBProgressHUD.hideHUDForView(self.view, animated:false)
+                                                         unless (status1 and status2 and status3)
+                                                           hud = MBProgressHUD.showHUDAddedTo(self.view, animated:true)
+                                                           hud.mode = MBProgressHUDModeAnnularDeterminate
+                                                           hud.labelText = "Failed retrieving feeds"
+                                                           # hud.hide(true)
+                                                         end
+    })
 
     events_menu_item.tag    = 0;
     press_menu_item.tag     = 1;
@@ -48,7 +54,7 @@ class MainView < UITableViewController
     refresh_menu_item.tag   = 3;
 
     self.menu = REMenu.alloc.initWithItems([ news_menu_item, events_menu_item, press_menu_item, refresh_menu_item ])
-    
+
     menu.cornerRadius   = 4;
     menu.shadowColor    = UIColor.blackColor
     menu.shadowOffset   = CGSizeMake(0, 1)
