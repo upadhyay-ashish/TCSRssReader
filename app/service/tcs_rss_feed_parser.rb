@@ -1,6 +1,7 @@
 class FeedsParser
 
-  def self.fetch_events_feeds(type, url)
+  def self.fetch_feeds(type, url)
+    return false unless internet_connected?
     request = NSURLRequest.requestWithURL(NSURL.URLWithString(url))
     response = nil
     error = nil
@@ -13,7 +14,10 @@ class FeedsParser
       titles << feed['title']['text']
       Feed.create_new (feed['title']['text'],feed['author']['text'],feed['link']['text'],feed['pubDate']['text'],feed['description']['text'],feed['text']['text'], type)
     end
-    titles
+  end
+
+  def self.internet_connected?
+    Reachability.reachabilityForInternetConnection.isReachable
   end
 
 end

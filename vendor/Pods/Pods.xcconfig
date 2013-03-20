@@ -1,7 +1,7 @@
 ALWAYS_SEARCH_USER_PATHS = YES
 HEADER_SEARCH_PATHS = ${PODS_HEADERS_SEARCH_PATHS}
-OTHER_LDFLAGS = -ObjC -lsqlite3 -framework QuartzCore
-PODS_BUILD_HEADERS_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/NanoStore" "${PODS_ROOT}/BuildHeaders/REMenu" "${PODS_ROOT}/BuildHeaders/XMLReader"
+OTHER_LDFLAGS = -ObjC -lsqlite3 -framework QuartzCore -framework SystemConfiguration
+PODS_BUILD_HEADERS_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/NanoStore" "${PODS_ROOT}/BuildHeaders/REMenu" "${PODS_ROOT}/BuildHeaders/Reachability" "${PODS_ROOT}/BuildHeaders/XMLReader"
 PODS_HEADERS_SEARCH_PATHS = ${PODS_PUBLIC_HEADERS_SEARCH_PATHS}
-PODS_PUBLIC_HEADERS_SEARCH_PATHS = "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/NanoStore" "${PODS_ROOT}/Headers/REMenu" "${PODS_ROOT}/Headers/XMLReader"
+PODS_PUBLIC_HEADERS_SEARCH_PATHS = "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/NanoStore" "${PODS_ROOT}/Headers/REMenu" "${PODS_ROOT}/Headers/Reachability" "${PODS_ROOT}/Headers/XMLReader"
 PODS_ROOT = ${SRCROOT}/Pods

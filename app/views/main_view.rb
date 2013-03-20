@@ -11,8 +11,8 @@ class MainView < UITableViewController
   def viewDidLoad
 
     super
-
-    reload_table_data("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
+    self.title = "Events"
+    self.feeds = Feed.find( type: "Events")
 
     self.menu = REMenu.alloc.initWithItems([])
 
@@ -26,30 +26,40 @@ class MainView < UITableViewController
 
     return self.menu.close if self.menu.isOpen
 
-    events_menu_item = REMenuItem.alloc.initWithTitle("Events", subtitle:"TCS Events", image:UIImage.imageNamed("Icon_Home.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e") })
+    events_menu_item = REMenuItem.alloc.initWithTitle("Events", subtitle:"TCS Events", image:UIImage.imageNamed("Icon_Home.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("Events") })
 
-    press_menu_item = REMenuItem.alloc.initWithTitle("Press Releases", subtitle:"TCS Press Releases", image:UIImage.imageNamed("Icon_Explore.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p") })
+    press_menu_item = REMenuItem.alloc.initWithTitle("Press Releases", subtitle:"TCS Press Releases", image:UIImage.imageNamed("Icon_Explore.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("Press Releases") })
 
-    news_menu_item = REMenuItem.alloc.initWithTitle("News", subtitle:"TCS News", image:UIImage.imageNamed("Icon_Activity.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n") })
+    news_menu_item = REMenuItem.alloc.initWithTitle("News", subtitle:"TCS News", image:UIImage.imageNamed("Icon_Activity.png"), highlightedImage:nil, action:Proc.new{|obj| reload_table_data("News") })
 
-    events_menu_item.tag = 0;
-    press_menu_item.tag = 1;
-    news_menu_item.tag = 2;
+    refresh_menu_item = REMenuItem.alloc.initWithTitle("Refresh", subtitle:"Refresh all feeds", image:UIImage.imageNamed("Icon_Profile.png"), highlightedImage:nil, action:Proc.new{ |obj|
+                                                         FeedsParser.fetch_feeds("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
+                                                         FeedsParser.fetch_feeds("Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p")
+                                                         FeedsParser.fetch_feeds("News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n")
+                                                         self.feeds = Feed.find( type: self.title)
+                                                         self.tableView.reloadData    
+                                                         })
 
-    self.menu = REMenu.alloc.initWithItems([ news_menu_item, events_menu_item, press_menu_item ])
-    menu.cornerRadius = 4;
-    menu.shadowColor = UIColor.blackColor
-    menu.shadowOffset = CGSizeMake(0, 1)
-    menu.shadowOpacity = 1
-    menu.imageOffset = CGSizeMake(5, -1)
+    events_menu_item.tag    = 0;
+    press_menu_item.tag     = 1;
+    news_menu_item.tag      = 2;
+    refresh_menu_item.tag   = 3;
+
+    self.menu = REMenu.alloc.initWithItems([ news_menu_item, events_menu_item, press_menu_item, refresh_menu_item ])
+    
+    menu.cornerRadius   = 4;
+    menu.shadowColor    = UIColor.blackColor
+    menu.shadowOffset   = CGSizeMake(0, 1)
+    menu.shadowOpacity  = 1
+    menu.imageOffset    = CGSizeMake(5, -1)
+
     menu.showFromNavigationController(self.navigationController)
 
   end
 
-  def reload_table_data(title, url)
+  def reload_table_data(title)
     self.title = title
-    FeedsParser.fetch_events_feeds(title, url)
-    self.feeds = Feed.find(:type => title)
+    self.feeds = Feed.find(type: title)
     self.tableView.reloadData
   end
 
@@ -77,7 +87,7 @@ class MainView < UITableViewController
     size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
 
     cell.setFrame(CGRectMake(CELL_CONTENT_MARGIN, CELL_CONTENT_MARGIN, CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), ((size.height > 44.0 ? size.height : 44))))
-    
+
     cell.textLabel.text = self.feeds[indexPath.row].title
     cell.textLabel.numberOfLines = 2
     cell.textLabel.lineBreakMode = UILineBreakModeWordWrap
@@ -93,14 +103,17 @@ class MainView < UITableViewController
     cell.detailTextLabel.setNumberOfLines(0)
     cell.detailTextLabel.setFont(UIFont.systemFontOfSize(FONT_SIZE))
     cell.detailTextLabel.setTag(2)
+
+    cell.selectionStyle = UITableViewCellSelectionStyleNone
     cell
 
   end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
-    vc = UIViewController.alloc.init
-    vc.title = "Ashish"
-    self.navigationController.pushViewController(vc, animated:true)
+    # vc = UIViewController.alloc.init
+    # vc.title = "Ashish"
+    # self.navigationController.pushViewController(vc, animated:true)
+    false
   end
 
   def remove_html_tags(string)

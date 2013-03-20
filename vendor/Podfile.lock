@@ -2,16 +2,19 @@
 PODS:
 - NanoStore (2.6.4)
 - REMenu (1.2.4)
+- Reachability (2.0.5)
 - XMLReader (0.0.2)
 
 DEPENDENCIES:
 - NanoStore (~> 2.6.0)
 - REMenu (~> 1.2.4)
+- Reachability (~> 2.0.5)
 - XMLReader (= 0.0.2)
 
 SPEC CHECKSUMS:
   NanoStore: 73d29e30e1e7f253f719c6ad1d60181ebcf1b5be
   REMenu: 21a0090837b10547f7d32626a068762574321ffa
+  Reachability: 4401c25aa5d2a8da0ce4ad51841100f0927ccc2d
   XMLReader: d8a522b0362140b328bcaec7f289ff4ffffebf29
 
 COCOAPODS: 0.16.4
