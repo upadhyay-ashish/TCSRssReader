@@ -5,7 +5,6 @@ require 'bundler'
 require 'rubygems'
 require 'motion-cocoapods'
 require 'nano-store'
-require 'bubble-wrap/all'
 require 'motion-pixate'
 
 Bundler.require
@@ -16,6 +15,7 @@ Motion::Project::App.setup do |app|
   app.resources_dirs = [ 'assets','./resources',]
   # Pixate framework
   app.pixate.framework = 'vendor/PXEngine.framework'
+  app.codesign_certificate = "iPhone Developer: Ashish Upadhyay (3B3F7KW7EG)"
   # Add the pod NanoStore to your project
   app.pods do
     pod 'NanoStore', '~> 2.6.0'
@@ -23,3 +23,4 @@ Motion::Project::App.setup do |app|
     pod 'REMenu', '~> 1.2.4'
   end
 end
+

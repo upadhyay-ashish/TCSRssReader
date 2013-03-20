@@ -1,7 +1,11 @@
 class MainView < UITableViewController
 
   attr_accessor :feeds, :menu
+
   CellIdentifier = "Cell"
+  FONT_SIZE           = 14.0
+  CELL_CONTENT_WIDTH  = 320.0
+  CELL_CONTENT_MARGIN = 30.0
 
 
   def viewDidLoad
@@ -49,42 +53,61 @@ class MainView < UITableViewController
     self.tableView.reloadData
   end
 
-
-
   def tableView( tableView, numberOfRowsInSection: section)
     self.feeds.count
   end
 
   def tableView(tableView, heightForRowAtIndexPath:indexPath)
-    190
+
+    text = (remove_html_tags(self.feeds[indexPath.row].description) + " " + self.feeds[indexPath.row].title )
+    constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
+    size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
+    height = size.height > 44.0 ? size.height : 44
+
+    return (height + (CELL_CONTENT_MARGIN * 2 ))
+
   end
 
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
-    # CustomFeedCell.get_cell_for_feed(tableView, self.feeds[indexPath.row])
 
+    cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) || UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier:CellIdentifier)
 
-    cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier)
-    if (cell.nil?)
-      cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier:CellIdentifier)
-      webView = UIWebView.alloc.initWithFrame(CGRectMake(10, 10, cell.bounds.size.width - 20, cell.bounds.size.height - 20))
-      webView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth
-      webView.tag = 1001
-      webView.userInteractionEnabled = false
-      webView.backgroundColor = UIColor.clearColor
-      webView.opaque = false
+    text = remove_html_tags(self.feeds[indexPath.row].description)
+    constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
+    size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
 
-      cell.addSubview(webView)
-    end
-    webView = cell.viewWithTag(1001)
-    webView.delegate = self
-    html = "<div><b>#{self.feeds[indexPath.row].title }</b></div>"+ self.feeds[indexPath.row].description
-    webView.loadHTMLString(html, baseURL:nil)
+    cell.setFrame(CGRectMake(CELL_CONTENT_MARGIN, CELL_CONTENT_MARGIN, CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), ((size.height > 44.0 ? size.height : 44))))
+    
+    cell.textLabel.text = self.feeds[indexPath.row].title
+    cell.textLabel.numberOfLines = 2
+    cell.textLabel.lineBreakMode = UILineBreakModeWordWrap
+    cell.textLabel.setFont(UIFont.systemFontOfSize(18))
+    cell.textLabel.setMinimumFontSize(18)
+    cell.textLabel.setNumberOfLines(0)
+    cell.textLabel.setTag(1)
 
-    return cell
+    cell.detailTextLabel.text = text
+    cell.detailTextLabel.numberOfLines = 2
+    cell.detailTextLabel.lineBreakMode = UILineBreakModeWordWrap
+    cell.detailTextLabel.setMinimumFontSize(FONT_SIZE)
+    cell.detailTextLabel.setNumberOfLines(0)
+    cell.detailTextLabel.setFont(UIFont.systemFontOfSize(FONT_SIZE))
+    cell.detailTextLabel.setTag(2)
+    cell
+
   end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
-    false
+    vc = UIViewController.alloc.init
+    vc.title = "Ashish"
+    self.navigationController.pushViewController(vc, animated:true)
+  end
+
+  def remove_html_tags(string)
+    re = /<("[^"]*"|'[^']*'|[^'">])*>/
+    string.gsub!(re, '')
+    string.gsub!('Read More...', '')
+    string
   end
 
 end
