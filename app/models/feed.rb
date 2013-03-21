@@ -6,6 +6,8 @@ class Feed < NanoStore::Model
   attribute :description
   attribute :text
   attribute :type
+  attribute :guid
+  attribute :enclosure
   attribute :created_at
 
   class << self

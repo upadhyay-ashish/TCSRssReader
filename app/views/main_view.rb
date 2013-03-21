@@ -12,14 +12,19 @@ class MainView < UITableViewController
 
     super
     self.title = "Events"
-    update_feeds if Feed.all.empty?
+     if Feed.all.empty?
+      update_feeds
+      sleep(5)
+    end
     self.feeds = Feed.find( type: "Events")
-
+    self.tableView.reloadData
     self.menu = REMenu.alloc.initWithItems([])
 
     self.view.backgroundColor = UIColor.colorWithWhite(0.902, alpha:1.000)
     self.navigationController.navigationBar.tintColor = UIColor.colorWithRed(0, green:179/255.0, blue:134/255.0, alpha:1)
-    self.navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle("Menu", style:UIBarButtonItemStyleBordered, target:self, action:"showMenu")
+    left_bar_button = UIBarButtonItem.alloc.initWithTitle("Menu", style:UIBarButtonItemStyleBordered, target:self, action:"showMenu")
+    left_bar_button.styleId = "button1"
+    self.navigationItem.leftBarButtonItem = (left_bar_button)
 
   end
 
@@ -78,7 +83,7 @@ class MainView < UITableViewController
 
   def tableView(tableView, heightForRowAtIndexPath:indexPath)
 
-    text = (remove_html_tags(self.feeds[indexPath.row].description) + " " + self.feeds[indexPath.row].title )
+    text = (remove_html_tags(self.feeds[indexPath.row]) + " " + self.feeds[indexPath.row].title )
     constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
     size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
     height = size.height > 44.0 ? size.height : 44
@@ -91,13 +96,13 @@ class MainView < UITableViewController
 
     cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) || UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier:CellIdentifier)
 
-    text = remove_html_tags(self.feeds[indexPath.row].description)
+    text = remove_html_tags(self.feeds[indexPath.row])
     constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
     size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
 
     cell.setFrame(CGRectMake(CELL_CONTENT_MARGIN, CELL_CONTENT_MARGIN, CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), ((size.height > 44.0 ? size.height : 44))))
 
-    cell.textLabel.text = self.feeds[indexPath.row].title
+    cell.textLabel.text = (self.feeds[indexPath.row].title)
     cell.textLabel.numberOfLines = 2
     cell.textLabel.lineBreakMode = UILineBreakModeWordWrap
     cell.textLabel.setFont(UIFont.systemFontOfSize(18))
@@ -119,17 +124,22 @@ class MainView < UITableViewController
   end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
-    # vc = UIViewController.alloc.init
-    # vc.title = "Ashish"
-    # self.navigationController.pushViewController(vc, animated:true)
     false
   end
 
-  def remove_html_tags(string)
+  def remove_html_tags(feed)
+    string = feed.description
     re = /<("[^"]*"|'[^']*'|[^'">])*>/
+    string = remove_date(string) unless feed.type == 'Press Releases'
     string.gsub!(re, '')
     string.gsub!('Read More...', '')
-    string
+    "\n"+string
+  end
+
+  def remove_date(string)
+    string = string.split("<div>")
+    string.delete_at(1)
+    string.join('<div>')
   end
 
 end
