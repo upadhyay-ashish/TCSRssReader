@@ -1,6 +1,12 @@
 # TCS RSS Feed Reader  
 
-This is an iOS application build using [Rubymotion](http://rubymotion.com/)
+This is an iOS application build using 
+
++ [Rubymotion](http://rubymotion.com/)
++ [Bundler](http://gembundler.com/)
++ [CocoaPods](http://cocoapods.org/)
++ [NanoStoreInMotion](https://github.com/siuying/NanoStoreInMotion)
++ [Pixate iOS Styling Framework](www.pixate.com)
 
 ## Running on Simulator/Device
 
