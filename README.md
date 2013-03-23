@@ -21,7 +21,10 @@ You will need Rubymotion installed on your Mac.
 
 ### Screenshots 
 
-  ![Alt Icon](/screenshots/icon.png) ![Alt Icon](/screenshots/events.png) ![Alt Icon](/screenshots/news.png) ![Alt Icon](/screenshots/press_releases.png)
+  ![Alt Icon](/screenshots/icon.png)  
+  ![Alt Icon](/screenshots/events.png)  
+  ![Alt Icon](/screenshots/news.png)   
+  ![Alt Icon](/screenshots/press_releases.png)  
 
 
 ### Suggestions ?
