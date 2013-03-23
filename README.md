@@ -1,6 +1,6 @@
 # TCS RSS Feed Reader  
 
-This is an iOS application build using the [Rubymotion](http://rubymotion.com/)
+This is an iOS application build using [Rubymotion](http://rubymotion.com/)
 
 ## Running on Simulator/Device
 
