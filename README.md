@@ -17,6 +17,11 @@ You will need Rubymotion installed on your Mac.
   5. To run on simulator <code> rake </code> else to run on a Device <code> rake device </code>
 
   6. To create a distribution IPA <code> rake archive:distribution </code>
+  
+
+### Screenshots 
+
+  ![Alt Icon](/screenshots/icon.png) ![Alt Icon](/screenshots/events.png) ![Alt Icon](/screenshots/news.png) ![Alt Icon](/screenshots/press_releases.png)
 
 
 ### Suggestions ?
