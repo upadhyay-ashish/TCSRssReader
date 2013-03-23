@@ -11,23 +11,26 @@ class MainView < UITableViewController
   def viewDidLoad
     super
     self.title = "Events"
-    if Feed.all.empty?
-      hud = MBProgressHUD.showHUDAddedTo(self.view, animated:false)
-      status = meta_fetch_feed_call("sync_")
-      hud.labelText = "Failed retrieving feeds" unless status
-    end
+    update_feeds if Feed.all.empty?
+      
 
     self.feeds = Feed.find( type: "Events")
     self.tableView.reloadData
+    self.view.backgroundColor = UIColor.colorWithWhite(0.902, alpha:1.000)
+
     self.menu = REMenu.alloc.initWithItems([])
 
     add_remenu
   end
 
   def add_remenu
-    self.view.backgroundColor = UIColor.colorWithWhite(0.902, alpha:1.000)
+
+    right_bar_button = UIBarButtonItem.alloc.initWithTitle("#{self.feeds.count}", style:UIBarButtonItemStyleBordered, target:self, action:nil)
+    right_bar_button.styleId = "button1"
+
     left_bar_button = UIBarButtonItem.alloc.initWithTitle("Menu", style:UIBarButtonItemStyleBordered, target:self, action:"showMenu")
     left_bar_button.styleId = "button1"
+    self.navigationItem.rightBarButtonItem = (right_bar_button)
     self.navigationItem.leftBarButtonItem = (left_bar_button)
   end
 
@@ -91,6 +94,7 @@ class MainView < UITableViewController
     refresh_menu_item = REMenuItem.alloc.initWithTitle("Refresh", subtitle:"Refresh all feeds", image:UIImage.imageNamed("Icon_Profile.png"), highlightedImage:nil, action:Proc.new{ |obj|
                                                          update_feeds
                                                          self.feeds = Feed.find( type: self.title)
+                                                         self.navigationItem.rightBarButtonItem.title = "#{self.feeds.count}"
                                                          self.tableView.reloadData
     })
 
@@ -121,6 +125,7 @@ class MainView < UITableViewController
   def reload_table_data(title)
     self.title = title
     self.feeds = Feed.find(type: title)
+    self.navigationItem.rightBarButtonItem.title = "#{self.feeds.count}"
     self.tableView.reloadData
   end
 

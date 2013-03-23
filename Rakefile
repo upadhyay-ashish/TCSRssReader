@@ -11,10 +11,14 @@ Bundler.require
 
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
-  app.name = 'TCS'
+  app.name = 'TCS RSS'
+
+  app.icons = ["iPhoneIcon_Big", "iPhoneIcon_Medium", "iPhoneIcon_Small"]
+
   app.resources_dirs = [ 'assets','./resources',]
   # Pixate framework
   app.pixate.framework = 'vendor/PXEngine.framework'
+  app.codesign_certificate = ENV['Developer_License'] 
   # Add the pod NanoStore to your project
   app.pods do
     pod 'NanoStore', '~> 2.6.0'
