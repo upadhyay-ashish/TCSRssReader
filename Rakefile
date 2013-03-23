@@ -6,7 +6,6 @@ require 'rubygems'
 require 'motion-cocoapods'
 require 'nano-store'
 require 'motion-pixate'
-require 'bubble-wrap/all'
 
 Bundler.require
 
@@ -20,8 +19,8 @@ Motion::Project::App.setup do |app|
   app.pods do
     pod 'NanoStore', '~> 2.6.0'
     pod 'REMenu', '~> 1.2.4'
+    pod 'XMLReader', '0.0.2'
     pod 'Reachability', '~>2.0.5'
     pod 'MBProgressHUD', '~> 0.6'
   end
 end
-

@@ -11,7 +11,7 @@ navigation-bar {
 
 table-view-cell{
   top : 6;
-  content-edge-inset : 0 0 0 6;
+  /*content-edge-inset : 0 0 0 6;*/
   font-weight : regular;
   font-size : 8px;
   color : #ffffff;
@@ -19,8 +19,8 @@ table-view-cell{
   border-radius : 1px;
   border-width : 1px;
   border-color : gray;
-  box-shadow : inset 0 1px 0 rgba(101,177,232,0.9),
-                          0 1px 0 rgba(255,255,255,0.1);
+  /*box-shadow : inset 0 1px 0 rgba(101,177,232,0.9),*/
+                          /*0 1px 0 rgba(255,255,255,0.1);*/
 }
 
 table-view-cell label{

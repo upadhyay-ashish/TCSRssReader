@@ -9,23 +9,73 @@ class MainView < UITableViewController
 
 
   def viewDidLoad
-
     super
     self.title = "Events"
-     if Feed.all.empty?
-      update_feeds
-      sleep(5)
+    if Feed.all.empty?
+      hud = MBProgressHUD.showHUDAddedTo(self.view, animated:false)
+      status = meta_fetch_feed_call("sync_")
+      hud.labelText = "Failed retrieving feeds" unless status
     end
+
     self.feeds = Feed.find( type: "Events")
     self.tableView.reloadData
     self.menu = REMenu.alloc.initWithItems([])
 
+    add_remenu
+  end
+
+  def add_remenu
     self.view.backgroundColor = UIColor.colorWithWhite(0.902, alpha:1.000)
-    self.navigationController.navigationBar.tintColor = UIColor.colorWithRed(0, green:179/255.0, blue:134/255.0, alpha:1)
     left_bar_button = UIBarButtonItem.alloc.initWithTitle("Menu", style:UIBarButtonItemStyleBordered, target:self, action:"showMenu")
     left_bar_button.styleId = "button1"
     self.navigationItem.leftBarButtonItem = (left_bar_button)
+  end
 
+
+  def tableView( tableView, numberOfRowsInSection: section)
+    self.feeds.count
+  end
+
+  def tableView(tableView, heightForRowAtIndexPath:indexPath)
+    text = (remove_html_tags(self.feeds[indexPath.row]) + " " + self.feeds[indexPath.row].title )
+    constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
+    size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
+    height = size.height > 44.0 ? size.height : 44
+
+    return (height + (CELL_CONTENT_MARGIN * 2 ))
+  end
+
+  def tableView(tableView, cellForRowAtIndexPath:indexPath)
+    cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) || UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier:CellIdentifier)
+
+    text = remove_html_tags(self.feeds[indexPath.row])
+    constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
+    size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
+
+    cell.setFrame(CGRectMake(CELL_CONTENT_MARGIN, CELL_CONTENT_MARGIN, CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), ((size.height > 44.0 ? size.height : 44))))
+
+    cell.textLabel.text = (self.feeds[indexPath.row].title)
+    cell.textLabel.numberOfLines = 2
+    cell.textLabel.lineBreakMode = UILineBreakModeWordWrap
+    cell.textLabel.setFont(UIFont.systemFontOfSize(18))
+    cell.textLabel.setMinimumFontSize(18)
+    cell.textLabel.setNumberOfLines(0)
+    cell.textLabel.setTag(1)
+
+    cell.detailTextLabel.text = text
+    cell.detailTextLabel.numberOfLines = 2
+    cell.detailTextLabel.lineBreakMode = UILineBreakModeWordWrap
+    cell.detailTextLabel.setMinimumFontSize(FONT_SIZE)
+    cell.detailTextLabel.setNumberOfLines(0)
+    cell.detailTextLabel.setFont(UIFont.systemFontOfSize(FONT_SIZE))
+    cell.detailTextLabel.setTag(2)
+
+    cell.selectionStyle = UITableViewCellSelectionStyleNone
+    cell
+  end
+
+  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+    false
   end
 
   def showMenu
@@ -63,10 +113,7 @@ class MainView < UITableViewController
 
   def update_feeds
     hud = MBProgressHUD.showHUDAddedTo(self.view, animated:false)
-    status1 = FeedsParser.fetch_feeds("Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
-    status2 = FeedsParser.fetch_feeds("Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p")
-    status3 = FeedsParser.fetch_feeds("News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n")
-    status =status1 and status2 and status3
+    status = meta_fetch_feed_call('sync_')
     hud.labelText = "Failed retrieving feeds" unless status
     hud.hide(true) if status
   end
@@ -75,56 +122,6 @@ class MainView < UITableViewController
     self.title = title
     self.feeds = Feed.find(type: title)
     self.tableView.reloadData
-  end
-
-  def tableView( tableView, numberOfRowsInSection: section)
-    self.feeds.count
-  end
-
-  def tableView(tableView, heightForRowAtIndexPath:indexPath)
-
-    text = (remove_html_tags(self.feeds[indexPath.row]) + " " + self.feeds[indexPath.row].title )
-    constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
-    size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
-    height = size.height > 44.0 ? size.height : 44
-
-    return (height + (CELL_CONTENT_MARGIN * 2 ))
-
-  end
-
-  def tableView(tableView, cellForRowAtIndexPath:indexPath)
-
-    cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) || UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier:CellIdentifier)
-
-    text = remove_html_tags(self.feeds[indexPath.row])
-    constraint = CGSizeMake(CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), 20000.0)
-    size = text.sizeWithFont(UIFont.systemFontOfSize(FONT_SIZE),constrainedToSize:constraint, lineBreakMode:UILineBreakModeWordWrap)
-
-    cell.setFrame(CGRectMake(CELL_CONTENT_MARGIN, CELL_CONTENT_MARGIN, CELL_CONTENT_WIDTH - (CELL_CONTENT_MARGIN * 2), ((size.height > 44.0 ? size.height : 44))))
-
-    cell.textLabel.text = (self.feeds[indexPath.row].title)
-    cell.textLabel.numberOfLines = 2
-    cell.textLabel.lineBreakMode = UILineBreakModeWordWrap
-    cell.textLabel.setFont(UIFont.systemFontOfSize(18))
-    cell.textLabel.setMinimumFontSize(18)
-    cell.textLabel.setNumberOfLines(0)
-    cell.textLabel.setTag(1)
-
-    cell.detailTextLabel.text = text
-    cell.detailTextLabel.numberOfLines = 2
-    cell.detailTextLabel.lineBreakMode = UILineBreakModeWordWrap
-    cell.detailTextLabel.setMinimumFontSize(FONT_SIZE)
-    cell.detailTextLabel.setNumberOfLines(0)
-    cell.detailTextLabel.setFont(UIFont.systemFontOfSize(FONT_SIZE))
-    cell.detailTextLabel.setTag(2)
-
-    cell.selectionStyle = UITableViewCellSelectionStyleNone
-    cell
-
-  end
-
-  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
-    false
   end
 
   def remove_html_tags(feed)
@@ -140,6 +137,14 @@ class MainView < UITableViewController
     string = string.split("<div>")
     string.delete_at(1)
     string.join('<div>')
+  end
+
+  def meta_fetch_feed_call(method="")
+    method_name = method+"fetch_feeds"
+    status1 = FeedsParser.send( method_name,"Events","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=e")
+    status2 = FeedsParser.send( method_name,"Press Releases","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=p")
+    status3 = FeedsParser.send( method_name,"News","http://www.tcs.com/rss_feeds/Pages/feed.aspx?f=n")
+    status =status1 and status2 and status3
   end
 
 end
